@@ -11,9 +11,18 @@ class TodoList extends StatefulWidget {
 }
 
 class _TodoListState extends State<TodoList> {
+  late Future<List<Todo>> _todosFuture;
+
   @override
   void initState() {
     super.initState();
+    _todosFuture = TodoService.findAll();
+  }
+
+  void _refreshTodos() {
+    setState(() {
+      _todosFuture = TodoService.findAll();
+    });
   }
 
   @override
@@ -24,14 +33,18 @@ class _TodoListState extends State<TodoList> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          GoRouter.of(context).push("/add");
+          GoRouter.of(context).push("/add").then(
+                (value) => _refreshTodos(),
+              );
         },
         child: const Icon(Icons.add),
       ),
       body: RefreshIndicator(
-        onRefresh: () => Future(() => setState(() {})),
+        onRefresh: () async {
+          _refreshTodos();
+        },
         child: FutureBuilder<List<Todo>>(
-          future: TodoService.findAll(),
+          future: _todosFuture,
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               return getListView(snapshot);
