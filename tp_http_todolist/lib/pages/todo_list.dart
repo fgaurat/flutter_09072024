@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tp_http_todolist/models/todo.dart';
 import 'package:tp_http_todolist/services/todo_service.dart';
+import 'dart:developer' as developer;
 
 class TodoList extends StatefulWidget {
   const TodoList({super.key});
@@ -61,11 +62,30 @@ class _TodoListState extends State<TodoList> {
     List<Todo> todos = snapshot.data ?? [];
     return ListView.builder(
       itemCount: todos.length,
-      itemBuilder: (context, index) => ListTile(
-        title: Text(todos[index].title),
-        onTap: () {
-          GoRouter.of(context).push("/detail", extra: todos[index]);
+      itemBuilder: (context, index) => Dismissible(
+        background: Container(
+          color: Colors.red,
+        ),
+        key: ValueKey<String>("key_${todos[index].hashCode}"),
+        onDismissed: (DismissDirection direction) {
+          setState(() {
+            TodoService.delete(todos[index]).then((_) {
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Todo Deleted')),
+                );
+              }
+            });
+
+            todos.removeAt(index);
+          });
         },
+        child: ListTile(
+          title: Text(todos[index].title),
+          onTap: () {
+            GoRouter.of(context).push("/detail", extra: todos[index]);
+          },
+        ),
       ),
     );
   }

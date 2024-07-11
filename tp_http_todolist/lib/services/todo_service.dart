@@ -24,6 +24,12 @@ class TodoService {
     return response;
   }
 
+  static Future<http.Response> delete(Todo todo) async {
+    var url = "${getUrl()}/${todo.id}";
+    var response = await http.delete(Uri.parse(url));
+    return response;
+  }
+
   static String getUrl() {
     var url = dotenv.get("ANDROID_URL_TODOS", fallback: "");
     if (Platform.isIOS) {
