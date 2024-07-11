@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:tp_http_todolist/models/todo.dart';
+import 'package:tp_http_todolist/services/todo_service.dart';
 
 class TodoForm extends StatefulWidget {
   const TodoForm({super.key});
@@ -9,6 +12,7 @@ class TodoForm extends StatefulWidget {
 
 class _TodoFormState extends State<TodoForm> {
   final _formKey = GlobalKey<FormState>();
+  final titleController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +30,7 @@ class _TodoFormState extends State<TodoForm> {
       child: Column(
         children: [
           TextFormField(
+            controller: titleController,
             // The validator receives the text that the user has entered.
             validator: (value) {
               if (value == null || value.isEmpty) {
@@ -36,12 +41,15 @@ class _TodoFormState extends State<TodoForm> {
           ),
           ElevatedButton(
             onPressed: () {
-// Validate returns true if the form is valid, or false otherwise.
               if (_formKey.currentState!.validate()) {
-                // If the form is valid, display a snackbar. In the real world,
-                // you'd often call a server or save the information in a database.
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Processing Data')),
+                // );
+                String title = titleController.text;
+
+                Todo todo = Todo(title, false);
+                TodoService.save(todo).then(
+                  (value) {
+                    GoRouter.of(context).pop();
+                  },
                 );
               }
             },

@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tp_http_todolist/models/todo.dart';
 import 'package:tp_http_todolist/services/todo_service.dart';
+import "dart:developer" as developer;
 
 class TodoList extends StatefulWidget {
-  const TodoList({super.key});
+  const TodoList({Key? key}) : super(key: key);
 
   @override
   State<TodoList> createState() => _TodoListState();
@@ -12,22 +13,17 @@ class TodoList extends StatefulWidget {
 
 class _TodoListState extends State<TodoList> {
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    developer.log('Build TodoList');
     return Scaffold(
       appBar: AppBar(
         title: const Text('TodoList'),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          GoRouter.of(context).push("/add");
-        },
-        child: const Icon(Icons.add),
-      ),
+          onPressed: () {
+            GoRouter.of(context).push("/add");
+          },
+          child: const Icon(Icons.add)),
       body: RefreshIndicator(
         onRefresh: () => Future(() => setState(() {})),
         child: FutureBuilder<List<Todo>>(
@@ -36,7 +32,9 @@ class _TodoListState extends State<TodoList> {
             if (snapshot.hasData) {
               return getListView(snapshot);
             } else {
-              return const CircularProgressIndicator();
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
             }
           },
         ),

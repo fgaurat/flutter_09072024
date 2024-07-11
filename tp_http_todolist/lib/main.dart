@@ -15,7 +15,7 @@ final _router = GoRouter(
   routes: [
     GoRoute(
       path: '/',
-      builder: (context, state) => const TodoList(),
+      builder: (context, state) => TodoList(),
     ),
     GoRoute(
         path: '/detail',

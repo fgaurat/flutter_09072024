@@ -17,6 +17,13 @@ class TodoService {
     return todos.map((t) => Todo.fromJson(t)).toList();
   }
 
+  static Future<http.Response> save(Todo todo) async {
+    var url = getUrl();
+    var response = await http.post(Uri.parse(url),
+        body: todo.toJson(), headers: {"Content-type": "application/json"});
+    return response;
+  }
+
   static String getUrl() {
     var url = dotenv.get("ANDROID_URL_TODOS", fallback: "");
     if (Platform.isIOS) {
